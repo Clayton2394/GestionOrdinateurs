@@ -52,20 +52,20 @@ jobs:
         
       - name: Build and push AuthentificationApi
         run: |
-          docker build -t "${{ env.DOCKER_REGISTRY }}/authentificationapi:latest" -f AuthentificationApi/Dockerfile .
+          docker build -t "${{ env.DOCKER_REGISTRY }}/authentificationapi:latest" -f AuthentificationApi/DockerFile .
           docker push "${{ env.DOCKER_REGISTRY }}/authentificationapi:latest"
 
       - name: Build and push GestionOrdinateurs API
         run: |
-          docker build -t "${{ env.DOCKER_REGISTRY }}/gestionordinateurs-api:latest" -f GestionOrdinateurs.API/Dockerfile .
+          docker build -t "${{ env.DOCKER_REGISTRY }}/gestionordinateurs-api:latest" -f GestionOrdinateurs.API/DockerFile .
           docker push "${{ env.DOCKER_REGISTRY }}/gestionordinateurs-api:latest"
 
       - name: Build and push Gateway
         run: |
-          docker build -t "${{ env.DOCKER_REGISTRY }}/gestionordinateurs-gateway:latest" -f GestionOrdinateurs.Gateway/Dockerfile .
+          docker build -t "${{ env.DOCKER_REGISTRY }}/gestionordinateurs-gateway:latest" -f GestionOrdinateurs.Gateway/DockerFile .
           docker push "${{ env.DOCKER_REGISTRY }}/gestionordinateurs-gateway:latest"
 
       - name: Build and push Blazor client
         run: |
-          docker build -t "${{ env.DOCKER_REGISTRY }}/gestionordinateurs-client:latest" -f GestionOrdinateurs.Client/Dockerfile .
+          docker build -t "${{ env.DOCKER_REGISTRY }}/gestionordinateurs-client:latest" -f GestionOrdinateurs.Client/DockerFile .
           docker push "${{ env.DOCKER_REGISTRY }}/gestionordinateurs-client:latest"
