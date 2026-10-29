@@ -41,7 +41,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
 
+      - name: Detect Docker credentials
+        id: docker-creds
+        run: |
+          if [ -n "${{ secrets.DOCKER_USERNAME }}" ] && [ -n "${{ secrets.DOCKER_PASSWORD }}" ]; then
+            echo "can_push=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::warning::DOCKER_USERNAME and/or DOCKER_PASSWORD secrets are not set. Images will be built but not pushed."
+            echo "can_push=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Login Docker Hub
+        if: steps.docker-creds.outputs.can_push == 'true'
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
         
       - name: Afficher l'arborescence
@@ -53,19 +64,27 @@ jobs:
       - name: Build and push AuthentificationApi
         run: |
           docker build -t "${{ env.DOCKER_REGISTRY }}/authentificationapi:latest" -f AuthentificationApi/Dockerfile .
-          docker push "${{ env.DOCKER_REGISTRY }}/authentificationapi:latest"
+          if [ "${{ steps.docker-creds.outputs.can_push }}" = "true" ]; then
+            docker push "${{ env.DOCKER_REGISTRY }}/authentificationapi:latest"
+          fi
 
       - name: Build and push GestionOrdinateurs API
         run: |
           docker build -t "${{ env.DOCKER_REGISTRY }}/gestionordinateurs-api:latest" -f GestionOrdinateurs.API/Dockerfile .
-          docker push "${{ env.DOCKER_REGISTRY }}/gestionordinateurs-api:latest"
+          if [ "${{ steps.docker-creds.outputs.can_push }}" = "true" ]; then
+            docker push "${{ env.DOCKER_REGISTRY }}/gestionordinateurs-api:latest"
+          fi
 
       - name: Build and push Gateway
         run: |
           docker build -t "${{ env.DOCKER_REGISTRY }}/gestionordinateurs-gateway:latest" -f GestionOrdinateurs.Gateway/Dockerfile .
-          docker push "${{ env.DOCKER_REGISTRY }}/gestionordinateurs-gateway:latest"
+          if [ "${{ steps.docker-creds.outputs.can_push }}" = "true" ]; then
+            docker push "${{ env.DOCKER_REGISTRY }}/gestionordinateurs-gateway:latest"
+          fi
 
       - name: Build and push Blazor client
         run: |
           docker build -t "${{ env.DOCKER_REGISTRY }}/gestionordinateurs-client:latest" -f GestionOrdinateurs.Client/Dockerfile .
-          docker push "${{ env.DOCKER_REGISTRY }}/gestionordinateurs-client:latest"
+          if [ "${{ steps.docker-creds.outputs.can_push }}" = "true" ]; then
+            docker push "${{ env.DOCKER_REGISTRY }}/gestionordinateurs-client:latest"
+          fi
