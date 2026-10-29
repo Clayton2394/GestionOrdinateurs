@@ -1,4 +1,4 @@
-name: CI/CD Docker GestionOrdinateurs
+name: GestionOrdinateurs
 
 on:
   workflow_dispatch:
@@ -48,44 +48,24 @@ jobs:
         run: |
          pwd
          ls -la
-         find . -iname DockerFile
-    
-      #################################################
-      # AuthentificationApi
-      #################################################
+         find . -name Dockerfile
+        
+      - name: Build and push AuthentificationApi
+        run: |
+          docker build -t "${{ env.DOCKER_REGISTRY }}/authentificationapi:latest" -f AuthentificationApi/Dockerfile .
+          docker push "${{ env.DOCKER_REGISTRY }}/authentificationapi:latest"
 
-      - name: Build AuthentificationApi
-        run: docker build -t ${{ env.DOCKER_REGISTRY }}/authentificationapi:latest -f AuthentificationApi/DockerFile .
+      - name: Build and push GestionOrdinateurs API
+        run: |
+          docker build -t "${{ env.DOCKER_REGISTRY }}/gestionordinateurs-api:latest" -f GestionOrdinateurs.API/Dockerfile .
+          docker push "${{ env.DOCKER_REGISTRY }}/gestionordinateurs-api:latest"
 
-      - name: Push AuthentificationApi
-        run: docker push ${{ env.DOCKER_REGISTRY }}/authentificationapi:latest
+      - name: Build and push Gateway
+        run: |
+          docker build -t "${{ env.DOCKER_REGISTRY }}/gestionordinateurs-gateway:latest" -f GestionOrdinateurs.Gateway/Dockerfile .
+          docker push "${{ env.DOCKER_REGISTRY }}/gestionordinateurs-gateway:latest"
 
-      #################################################
-      # GestionOrdinateursAPI
-      #################################################
-      - name: Build GestionOrdinateursAPI
-        run : docker build -t ${{env.DOCKER_REGISTRY}}/gestionordinateursapi:latest -f GestionOrdinateurs.API/DockerFile .
-      
-      - name: Push GestionOrdinateursAPI
-        run: docker push ${{env.DOCKER_REGISTRY}}/gestionordinateursapi:latest
-
-      #################################################
-      # GestionOrdinateursGateway
-      #################################################
-      
-      - name: Build GestionOrdinateursGateway
-        run: docker build -t ${{ env.DOCKER_REGISTRY }}/gestionordinateursgateway:latest -f GestionOrdinateurs.Gateway/DockerFile .
-
-      - name: Push GestionOrdinateursGateway
-        run: docker push ${{ env.DOCKER_REGISTRY }}/gestionordinateursgateway:latest
-
-      #################################################
-      # GestionOrdinateursClient
-      #################################################
-
-      - name: Build GestionOrdinateursClient
-        run: docker build -t ${{ env.DOCKER_REGISTRY }}/gestionordinateursclient:latest -f GestionOrdinateurs.Client/DockerFile .
-
-      - name: Push GestionOrdinateursClient
-        run: docker push ${{ env.DOCKER_REGISTRY }}/gestionordinateursclient:latest
-	  # .... Les autres projets à pousser sous docker (à vous de reflechir sur ceux à poursser)
+      - name: Build and push Blazor client
+        run: |
+          docker build -t "${{ env.DOCKER_REGISTRY }}/gestionordinateurs-client:latest" -f GestionOrdinateurs.Client/Dockerfile .
+          docker push "${{ env.DOCKER_REGISTRY }}/gestionordinateurs-client:latest"
