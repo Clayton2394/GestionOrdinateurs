@@ -31,23 +31,19 @@
             <NavLink class="nav-link" href="reparations">Réparations</NavLink>
         </div>
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="login">Connexion</NavLink>
+            <NavLink class="nav-link" href="authentication/login">Connexion</NavLink>
         </div>
         <div class="nav-item px-3">
-            <button class="nav-link btn btn-link text-start" @onclick="Deconnecter">
-                Déconnexion
-            </button>
+            <NavLink class="nav-link" href="authentication/logout">Déconnexion</NavLink>
         </div>
+        @* L'ancien jeton local n'est plus utilisé avec Keycloak. *@
+        @* <button class="nav-link btn btn-link text-start" @onclick="Deconnecter">
+                Déconnexion
+            </button> *@
     </nav>
 </div>
 
 @code {
-    [Inject]
-    private Blazored.SessionStorage.ISessionStorageService SessionStorage { get; set; } = default!;
-
-    [Inject]
-    private NavigationManager Navigation { get; set; } = default!;
-
     private bool collapseNavMenu = true;
 
     private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
@@ -55,12 +51,6 @@
     private void ToggleNavMenu()
     {
         collapseNavMenu = !collapseNavMenu;
-    }
-
-    private async Task Deconnecter()
-    {
-        await SessionStorage.RemoveItemAsync("authToken");
-        Navigation.NavigateTo("/");
     }
 
 }

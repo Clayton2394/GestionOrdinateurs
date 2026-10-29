@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "jVJLOUWTk/k=",
+  "dgSpecHash": "NqC2nJq5PHg=",
   "success": true,
   "projectFilePath": "C:\\Users\\clayh\\Desktop\\EFREI\\S7\\Dotnet_C#\\Tp_C#\\GestionOrdinateurs\\GestionOrdinateurs.Client\\GestionOrdinateurs.Client.csproj",
   "expectedPackageFiles": [
@@ -13,6 +13,7 @@
     "C:\\Users\\clayh\\.nuget\\packages\\microsoft.aspnetcore.components.forms\\10.0.12\\microsoft.aspnetcore.components.forms.10.0.12.nupkg.sha512",
     "C:\\Users\\clayh\\.nuget\\packages\\microsoft.aspnetcore.components.web\\10.0.12\\microsoft.aspnetcore.components.web.10.0.12.nupkg.sha512",
     "C:\\Users\\clayh\\.nuget\\packages\\microsoft.aspnetcore.components.webassembly\\10.0.12\\microsoft.aspnetcore.components.webassembly.10.0.12.nupkg.sha512",
+    "C:\\Users\\clayh\\.nuget\\packages\\microsoft.aspnetcore.components.webassembly.authentication\\10.0.12\\microsoft.aspnetcore.components.webassembly.authentication.10.0.12.nupkg.sha512",
     "C:\\Users\\clayh\\.nuget\\packages\\microsoft.aspnetcore.components.webassembly.devserver\\10.0.12\\microsoft.aspnetcore.components.webassembly.devserver.10.0.12.nupkg.sha512",
     "C:\\Users\\clayh\\.nuget\\packages\\microsoft.aspnetcore.metadata\\10.0.12\\microsoft.aspnetcore.metadata.10.0.12.nupkg.sha512",
     "C:\\Users\\clayh\\.nuget\\packages\\microsoft.extensions.configuration\\10.0.12\\microsoft.extensions.configuration.10.0.12.nupkg.sha512",

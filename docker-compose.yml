@@ -25,11 +25,12 @@ services:
       KC_HEALTH_ENABLED: "true"
       KC_HOSTNAME_STRICT_BACKCHANNEL: "false"
       KC_HOSTNAME_STRICT_HTTPS: "false"
-    command: start-dev
+    command: start-dev --import-realm
     ports:
       - "8180:8080"
     volumes:
       - keycloak_data:/opt/keycloak/data
+      - ./keycloak:/opt/keycloak/data/import:ro
     networks:
       - appnet
 

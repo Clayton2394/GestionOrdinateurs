@@ -1,0 +1,68 @@
+{
+  "realm": "gestion-ordinateurs",
+  "enabled": true,
+  "registrationAllowed": false,
+  "clients": [
+    {
+      "clientId": "gestionordinateurs-client",
+      "name": "GestionOrdinateurs Blazor",
+      "enabled": true,
+      "publicClient": true,
+      "protocol": "openid-connect",
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": false,
+      "redirectUris": [
+        "http://localhost:5000/authentication/login-callback",
+        "http://localhost:5096/authentication/login-callback",
+        "https://localhost:7293/authentication/login-callback"
+      ],
+      "webOrigins": [
+        "http://localhost:5000",
+        "http://localhost:5096",
+        "https://localhost:7293"
+      ]
+    }
+  ],
+  "roles": {
+    "realm": [
+      {
+        "name": "Admin"
+      },
+      {
+        "name": "Gestionnaire"
+      }
+    ]
+  },
+  "users": [
+    {
+      "username": "user1",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "password",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "Admin"
+      ]
+    },
+    {
+      "username": "user2",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "password",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "Gestionnaire"
+      ]
+    }
+  ]
+}

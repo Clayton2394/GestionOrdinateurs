@@ -1,8 +1,6 @@
 @page "/reparations"
-@using System.Net.Http.Headers
 @using System.Net.Http.Json
 @inject IHttpClientFactory HttpClientFactory
-@inject Blazored.SessionStorage.ISessionStorageService SessionStorage
 
 <PageTitle>Historique des réparations</PageTitle>
 
@@ -51,13 +49,6 @@ else
         try
         {
             var client = HttpClientFactory.CreateClient("GestionOrdinateursApi");
-            var token = await SessionStorage.GetItemAsync<string>("authToken");
-            if (!string.IsNullOrWhiteSpace(token))
-            {
-                client.DefaultRequestHeaders.Authorization =
-                    new AuthenticationHeaderValue("Bearer", token);
-            }
-
             var result = await client.GetFromJsonAsync<List<HistoriqueReparation>>(
                 "api/Reparation/historique");
             reparations = result ?? new List<HistoriqueReparation>();

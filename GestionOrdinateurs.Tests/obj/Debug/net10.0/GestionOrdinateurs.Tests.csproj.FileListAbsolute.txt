@@ -154,3 +154,4 @@ C:\Users\clayh\Desktop\EFREI\S7\Dotnet_C#\Tp_C#\GestionOrdinateurs\GestionOrdina
 C:\Users\clayh\Desktop\EFREI\S7\Dotnet_C#\Tp_C#\GestionOrdinateurs\GestionOrdinateurs.Tests\obj\Debug\net10.0\GestionOrdinateurs.Tests.pdb
 C:\Users\clayh\Desktop\EFREI\S7\Dotnet_C#\Tp_C#\GestionOrdinateurs\GestionOrdinateurs.Tests\obj\Debug\net10.0\GestionOrdinateurs.Tests.genruntimeconfig.cache
 C:\Users\clayh\Desktop\EFREI\S7\Dotnet_C#\Tp_C#\GestionOrdinateurs\GestionOrdinateurs.Tests\obj\Debug\net10.0\ref\GestionOrdinateurs.Tests.dll
+C:\Users\clayh\Desktop\EFREI\S7\Dotnet_C#\Tp_C#\GestionOrdinateurs\GestionOrdinateurs.Tests\bin\Debug\net10.0\parcinfo.db

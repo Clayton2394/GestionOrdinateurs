@@ -1,10 +1,10 @@
-using System.Text;
 using GestionOrdinateurs.API;
 using GestionOrdinateurs.Shared;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi;
-using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
+using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,31 +34,55 @@ builder.Services.AddSwaggerGen(options =>
             new List<string>()
     });
 });
-var jwtKey = builder.Configuration["Jwt:Key"]
-    ?? throw new InvalidOperationException(
-        "La configuration Jwt:Key est obligatoire.");
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme =
         JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme =
-        JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 })
 .AddJwtBearer(options =>
 {
     options.RequireHttpsMetadata = false;
-    options.SaveToken = true;
-    options.TokenValidationParameters = new TokenValidationParameters
+    options.Authority = builder.Configuration["Keycloak:Authority"]
+        ?? throw new InvalidOperationException(
+            "La configuration Keycloak:Authority est obligatoire.");
+    options.MetadataAddress = builder.Configuration["Keycloak:MetadataAddress"]
+        ?? throw new InvalidOperationException(
+            "La configuration Keycloak:MetadataAddress est obligatoire.");
+    options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
     {
-        ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes(jwtKey)),
-        ValidateIssuer = false,
+        ValidateIssuer = true,
+        ValidIssuer = builder.Configuration["Keycloak:Issuer"],
         ValidateAudience = false,
         ValidateLifetime = true,
         ClockSkew = TimeSpan.Zero,
-        RoleClaimType = System.Security.Claims.ClaimTypes.Role,
-        NameClaimType = System.Security.Claims.ClaimTypes.Name
+        NameClaimType = "preferred_username",
+        RoleClaimType = ClaimTypes.Role
+    };
+    options.Events = new JwtBearerEvents
+    {
+        OnTokenValidated = context =>
+        {
+            var realmAccess = context.Principal?.FindFirst("realm_access")?.Value;
+            if (realmAccess is not null)
+            {
+                using var document = JsonDocument.Parse(realmAccess);
+                if (document.RootElement.TryGetProperty("roles", out var roles))
+                {
+                    var identity = context.Principal?.Identity as ClaimsIdentity;
+                    if (identity is not null)
+                    {
+                        foreach (var role in roles.EnumerateArray())
+                        {
+                            identity.AddClaim(new Claim(
+                                ClaimTypes.Role, role.GetString() ?? string.Empty));
+                        }
+                    }
+                }
+            }
+
+            return Task.CompletedTask;
+        }
     };
 });
 builder.Services.AddAuthorization();

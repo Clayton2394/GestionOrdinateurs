@@ -160,3 +160,4 @@ C:\Users\clayh\Desktop\EFREI\S7\Dotnet_C#\Tp_C#\GestionOrdinateurs\GestionOrdina
 C:\Users\clayh\Desktop\EFREI\S7\Dotnet_C#\Tp_C#\GestionOrdinateurs\GestionOrdinateurs.API\obj\Debug\net10.0\GestionOrdinateurs.API.pdb
 C:\Users\clayh\Desktop\EFREI\S7\Dotnet_C#\Tp_C#\GestionOrdinateurs\GestionOrdinateurs.API\obj\Debug\net10.0\GestionOrdinateurs.API.genruntimeconfig.cache
 C:\Users\clayh\Desktop\EFREI\S7\Dotnet_C#\Tp_C#\GestionOrdinateurs\GestionOrdinateurs.API\obj\Debug\net10.0\ref\GestionOrdinateurs.API.dll
+C:\Users\clayh\Desktop\EFREI\S7\Dotnet_C#\Tp_C#\GestionOrdinateurs\GestionOrdinateurs.API\bin\Debug\net10.0\parcinfo.db

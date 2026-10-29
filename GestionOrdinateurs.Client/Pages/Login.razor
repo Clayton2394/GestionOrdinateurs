@@ -1,75 +1,12 @@
 @page "/login"
-@using System.Net.Http.Json
-@inject IHttpClientFactory HttpClientFactory
-@inject Blazored.SessionStorage.ISessionStorageService SessionStorage
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @inject NavigationManager Navigation
 
 <PageTitle>Connexion</PageTitle>
 
 <h1>Connexion</h1>
-
-<EditForm Model="@model" OnValidSubmit="Connecter">
-    <div class="mb-3">
-        <label for="login">Login</label>
-        <InputText id="login" class="form-control" @bind-Value="model.Login" />
-    </div>
-    <button class="btn btn-primary" type="submit" disabled="@isLoading">
-        Se connecter
-    </button>
-</EditForm>
-
-@if (errorMessage is not null)
-{
-    <p class="text-danger mt-3">@errorMessage</p>
-}
-
-@code {
-    private LoginModel model = new();
-    private string? errorMessage;
-    private bool isLoading;
-
-    private async Task Connecter()
-    {
-        isLoading = true;
-        errorMessage = null;
-
-        try
-        {
-            var response = await HttpClientFactory.CreateClient(
-                "AuthenticationApi").PostAsJsonAsync(
-                "api/Authentication/login",
-                model);
-
-            if (!response.IsSuccessStatusCode)
-            {
-                errorMessage = "Cet utilisateur n'existe pas.";
-                return;
-            }
-
-            var token = await response.Content.ReadFromJsonAsync<TokenResponse>();
-            if (token is null || string.IsNullOrWhiteSpace(token.Token))
-            {
-                errorMessage = "Le serveur n'a pas renvoyé de token.";
-                return;
-            }
-
-            await SessionStorage.SetItemAsync("authToken", token.Token);
-            Navigation.NavigateTo("/");
-        }
-        catch (HttpRequestException)
-        {
-            errorMessage = "L'API d'authentification est indisponible.";
-        }
-        finally
-        {
-            isLoading = false;
-        }
-    }
-
-    private sealed class LoginModel
-    {
-        public string Login { get; set; } = string.Empty;
-    }
-
-    private sealed record TokenResponse(string Token, DateTimeOffset Expires);
-}
+<p>La connexion est gérée par Keycloak.</p>
+<button class="btn btn-primary"
+        @onclick='() => Navigation.NavigateTo("authentication/login")'>
+    Se connecter avec Keycloak
+</button>
