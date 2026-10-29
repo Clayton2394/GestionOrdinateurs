@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("GestionOrdinateurs.Client")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2638f462a787aad6cd05968e15a8d2c7361e0001")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a0695bd87da228a6d9d462f6a7d0f2f01ee873a1")]
 [assembly: System.Reflection.AssemblyProductAttribute("GestionOrdinateurs.Client")]
 [assembly: System.Reflection.AssemblyTitleAttribute("GestionOrdinateurs.Client")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
