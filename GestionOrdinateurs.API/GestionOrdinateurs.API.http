@@ -1,0 +1,43 @@
+@GestionOrdinateurs.API_HostAddress = http://localhost:5090
+
+GET {{GestionOrdinateurs.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
+
+### Simuler trois réparations en parallèle
+POST {{GestionOrdinateurs.API_HostAddress}}/api/Reparation/SimulerReparation
+
+### Lister les réparations avec leur ordinateur
+GET {{GestionOrdinateurs.API_HostAddress}}/api/Reparation
+Accept: application/json
+
+### Historique des réparations
+GET {{GestionOrdinateurs.API_HostAddress}}/api/Reparation/historique
+Accept: application/json
+
+### Consommer dix SSD en parallèle
+GET {{GestionOrdinateurs.API_HostAddress}}/api/Reparation/GetStockSSD
+Accept: application/json
+
+### Diagnostic d'un ordinateur
+GET {{GestionOrdinateurs.API_HostAddress}}/api/Ordinateurs/1/diagnostic
+Accept: application/json
+
+### Statistiques du parc
+GET {{GestionOrdinateurs.API_HostAddress}}/api/Ordinateurs/statistiques
+Accept: application/json
+
+### Recherche dans l'inventaire par nom
+GET {{GestionOrdinateurs.API_HostAddress}}/api/Ordinateurs/inventaire/ThinkPad%20T14
+Accept: application/json
+
+### Les journaux sont écrits dans Logs/Reparations_Logs et Logs/Ordinateurs
+
+### Récupérer tous les utilisateurs
+GET {{GestionOrdinateurs.API_HostAddress}}/api/Users
+Accept: application/json
+
+### Chercher un utilisateur par login
+GET {{GestionOrdinateurs.API_HostAddress}}/api/Users/user1
+Accept: application/json

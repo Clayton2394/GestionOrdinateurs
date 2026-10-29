@@ -1,0 +1,145 @@
+# Gestion d'une flotte d'ordinateurs
+
+L'atelier informatique continue son évolution.
+Les clients déposent leurs ordinateurs pour réparation et achètent du matériel.
+
+# Objectifs pédagogiques
+
+Vous devez améliorer votre API afin de :
+
+- Exploiter les données avec LINQ
+- Corriger les tests unitaires cassés par EF Core
+- Simuler plusieurs réparations simultanées
+- Sécuriser les accès concurrents aux stocks de pièces
+
+## Démarrage
+Pensez aux commentaires dans vos codes.
+
+### Tout le travail s'effectuera dans la solution GestionOrinateurs du dernier TP.
+
+
+## Réparation des tests unitaires (4 pts)
+
+Depuis l'ajout de EFCore, nos tests unitaires ne fonctionne plus. Que faire ?
+
+1. Aller dans notre projet GestionOrinateurs.Tests et s'assurer qu'il est bien ajouter à la solution.
+
+2. Ajouter les package `Microsoft.EntityFrameworkCore.InMemory` et `FluentAssertions`
+
+3. Ajouter une méthode qui permet de créer un contexte
+`
+private ParcInformatiqueContext CreerContexte()
+{
+    var options =
+        new DbContextOptionsBuilder<ParcInformatiqueContext>()
+            .UseInMemoryDatabase(Guid.NewGuid().ToString())
+            .Options;
+
+    return new ParcInformatiqueContext(options);
+}
+`
+
+4. Modifier les tests pour utiliser le context.
+
+
+
+
+## Utilisation de LINQ (4 pts)
+
+5. Modifier les endpoints existant pour être sur d'utiliser LINQ (quand c'est nécessaire) et en méthode asynchrone.
+
+6. Créer un nouvel enpoint pour renvoyer uniquement les ordinateurs disponible (ayant un stock  > 0). Ici si vous n'aviez pas l'attribut stock dans ordinateur pensez à l'ajouter (pourquoi pas avec une valeur par défaut). 
+Ensuite pensez aussi à mettre à jour votre base de données avec dotnet ef migration et update.
+
+7. Créer /Modifier l'endpoint de recherche d'ordinateur par marque
+
+8. Créer un endpoint qui renvoit les ordinateurs du plus cher au moins cher. (Si le prix n'était pas dans les attibuts d'ordinateurs, pensez aussi à l'ajouter et à mettre à jour la base de données pourquoi pas avec une valeur par défaut)
+
+8b. Mettre à jour les endpoints création et mise a jour ordinateur pour prendre en compte ces nouveaux attributs.
+
+9. Corriger à nouveau les tests unitaires
+
+
+
+## Gestion des réparations (7 pts)
+
+10. Ajouté une nouvelle entité `Reparation`
+`
+public class Reparation
+{
+    public int Id { get; set; }
+
+    public Ordinateur UnOrdinateur { get; set; }
+
+    public string TypeReparation { get; set; }
+
+    public DateTime DateDebut { get; set; }
+
+    public string Statut { get; set; }
+}
+`
+
+10b. Dans votre classe context, ajouter `DbSet<Reparation>` et ajouter la configuration pour qu'ordinateurId soit bien une clé primaire de l'entité Ordinateur.
+
+11. Créer le service ReparationService.cs (pensez à l'enregistrer au demrrage de l'API).
+
+12. Dans ce service, créer la méthode asyncrhone
+`
+public async Task SimulerReparationAsync(
+    Ordinateur ordinateur)
+{
+    // Création object reparation (test)
+	var reparation = await _context.Reparations.Add(test);
+    //Méthode de création d'une réparation en base. (à créér par vous)
+	await Task.Delay(2000);
+	reparation.Statut = "Terminée";
+    await _context.SaveChangesAsync();
+    Console.WriteLine(
+        $"{ordinateur.Nom} réparé");
+}
+`
+
+13. Créer le controller `ReparationController.cs`
+
+14. Y ajouter l'endpoint en POST SmulerReparation dont le contenu sera : 
+`
+//Récupération de la liste d'ordinateurs.
+await Task.WhenAll(
+	_reparService.SimulerReparationAsync(listOrdinateurs[0]),
+	_reparService.SimulerReparationAsync(listOrdinateurs[1]),
+	_reparService.SimulerReparationAsync(listOrdinateurs[2])
+);
+`
+
+15. AJouter l'endpoint asynchrone pour afficher la liste des réparations et pour chaque réparation afficher les informations de l'ordinateur correspondant.
+
+
+## Problème de concurrences (3 pts)
+
+16. Créer la classe StockService.cs avec un attribut entier StrockSSD initialiser à 10 par défaut.
+
+16b. Ajouter la méthode asynchrone void ConsommerSSD qui va juste dimimuer StockSSD de 1.
+
+17. Dans ReparationController, ajouter un endpoint en GET (GetStockSSD...) qui renvoi en log le StockSSD et dans son code on doit exécuter d'abord 10 taches en parallèle. Exemple : 
+Pensez à ajouter un delai avant de diminuer le stock `Task.Delay(10).Wait();`
+`
+.....
+Parallel.For(
+    0,
+    10,
+    i => _stockService.ConsommerSSD());
+
+return (_stockService.StockSSD);
+`
+
+Quel constat faites vous ? Le résultat est-il cohérent ? et pourquoi ?
+
+
+
+## Problème de concurrences(suite) (2 pts)
+
+18. Ajoutez un objet (object) en lecture seule dans la classe service et l'initialiser.
+
+19. Dans la méthode ConsommerSSD, poser un verrou sur le changement de la valeur de StockSSD
+
+20. Relancer notre endpoint "GetStockSSD" que constatez vous ? 

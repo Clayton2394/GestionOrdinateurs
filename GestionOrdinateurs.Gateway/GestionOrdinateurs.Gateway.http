@@ -1,0 +1,11 @@
+@GestionOrdinateurs.Gateway_HostAddress = http://localhost:5010
+
+GET {{GestionOrdinateurs.Gateway_HostAddress}}/api/Ordinateurs
+Accept: application/json
+
+###
+
+GET {{GestionOrdinateurs.Gateway_HostAddress}}/api/Reparation/historique
+Accept: application/json
+
+###

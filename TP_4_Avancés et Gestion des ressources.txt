@@ -1,0 +1,226 @@
+# Gestion d'une flotte d'ordinateurs
+
+L'atelier de réparation et de vente d'ordinateurs a grandi.
+
+Les premiers développements ont permis :
+
+la gestion des ordinateurs ; la gestion du stock ; l'utilisation d'EF Core ;
+la création d'API Web ; les requêtes LINQ ; les traitements asynchrones.
+
+L'équipe de développement souhaite maintenant améliorer la qualité du modèle métier en utilisant plusieurs fonctionnalités avancées du langage C# :
+
+struct ; record ; indexeurs ; déconstruction ;
+gestion des ressources ; IAsyncDisposable ; Garbage Collector.
+
+L'objectif est également de conserver la compatibilité avec EF Core.
+
+
+# Objectifs pédagogiques
+
+À la fin de ce TP, vous serez capable de :
+
+- Utiliser une structure (struct)
+- Créer et utiliser un record
+- Déconstruire un record
+- Créer un indexeur personnalisé
+- Manipuler des fichiers
+- Comprendre le rôle du Garbage Collector
+- Écrire des tests unitaires
+- Adapter un modèle EF Core existant
+- Adapter les tests unitaires
+
+
+## Démarrage
+Pensez aux commentaires dans vos codes.
+
+### Tout le travail s'effectuera dans la solution GestionOrinateurs du dernier TP.
+Le projet possède actuellement plusieurs modèles : (OrdinateurPortable, OrdinateurFixe)
+on va simplifier le modèle afin de n'utiliser qu'une seule entité : ( Ordinateur ).
+
+
+
+## Partie 1 – Refactoring du modèle EF Core (4 pts)
+
+1. Créer l'enum TypeOrdinateur (Portable, Fixe, Server) et la classe `Caracteristiques`
+`
+public record Caracteristiques
+{
+    public int RamGo { get; set; }
+    public TypeOrdinateur TypeOrdi { get; set; }
+    public int StockageGo { get; set; }
+    …..
+
+    public Caracteristiques(int ramGo, int stockageGo, .....)
+    {
+        RamGo = ramGo;
+        StockageGo = stockageGo;
+        .....
+    }
+}
+``
+
+2. Modifier la classe Ordinateur en ajoutant une propriété de Type Caracteristiques et enlever ce qui n'a pas à y être. La classe Ordinateur deviendra donc par exemple : 
+`
+[Table("Ordinateur")]
+public class Ordinateur
+{
+    public int Id { get; set; }
+    public string Nom { get; set; }
+    public EtatOrdinateur Etat { get; set; }
+
+    [DefaultValue(0)]
+    public int Stock { get; set; }
+
+    [DefaultValue(0)]
+    public decimal Prix { get; set; }
+
+    public Caracteristiques Caracteristiques { get; set; }
+
+    public List<Reparation> Reparations { get; set; } = new();
+}
+`
+
+3. Supprimer les objets OrdinateurFixe et OrdinateurPortable et corriger tout votre code pour que tout compile y compris les tests unitaires. Mettre également un objet Liste de réparations dans la classe ordinateurs et faire la config nécessaire dans les méthodes OnModelCreating de votre context.
+`
+        modelBuilder.Entity<Ordinateur>()
+            .OwnsOne(o => o.Caracteristiques);
+
+        modelBuilder.Entity<Ordinateur>()
+            .HasMany(o => o.Reparations)
+            .WithOne(r => r.UnOrdinateur);
+`
+
+4. Mettre à jour EF Core. (migration et update). SI ça ne fonctionne pas, Supprimer les précédentes migrations (dossier migrations), votre base données SQLite et relancer.
+
+5. Tester les API d'ajout d'ordinateurs avec plusieurs ordinateurs (au moins 5) et d'affichage de tous les ordinateurs.
+
+
+
+
+## Partie 2 - Historique des réparations avec les records (4 pts)
+
+6. Ajouter l'attribut `String Technicien` dans la classe reparation. et mettre à jour EFCore.
+
+7. Lancer une simulation de plusieurs réparations d'ordinateurs (au moins 5) via l'API fait précédement.
+
+8. Dans la classe reparationService, Créer le record : HistoriqueReparationRecord
+`
+public record HistoriqueReparationRecord(
+    int OrdinateurId,
+    string NomOrdinateur,
+    string Technicien,
+    string TypeReparation,
+    DateTime DateIntervention
+);
+`
+9. Dans reparationService, créer une méthode qui renvoi l'historique des réparations dans le record précédent.
+
+9. Dans ReparationsController, créer l'endpoint : GET api/reparations/historique 
+qui appelle la méthode de réparationservice et renvoi l'historique des réparations dans le record précédent.
+
+11. Corriger les tests au besoin et faire des tests sur les APIs.
+
+
+
+## Partie 3 - Pattern Matching pour le diagnostic (7 pts)
+
+12. Créer / Modifier l'Enum EtatOrdinateur (EnService, EnPanne, EnMaintenance, HorsService, Lent, Reparable) et l'ajouter à la classe Ordinateur et mettre à jour EFCore
+
+13. Dans OrdinateurService créer un service
+`
+string Diagnostiquer(Ordinateur ordinateur)
+{
+    return ordinateur switch
+	{
+		{
+			Etat: EtatOrdinateur.HS
+		}
+			=> "Remplacement",
+
+		{
+			Etat: EtatOrdinateur.Lent,
+			Caracteristiques:
+			{
+				RamGo: < 8
+			}
+		}
+			=> "Ajouter RAM",
+
+		_
+			=> "Aucune action"
+	};
+}
+`
+
+14. Créer l'endpoint GET api/ordinateurs/{id}/diagnostic
+
+15. Créer une fonction dans ordinateurservice qui renvoi un tuple nommé
+`
+public (int TotalOrdinateur, int OrdiDisponibles, decimal ValeurStock, int NbReparations)
+    CalculerStatistiques()
+`
+
+16. Dans un endpoint de OrdinateurController renvoyer des statistiques
+`
+var (total, enStock, ....)
+    = service.CalculerStatistiques();
+`
+
+## Partie 4 - Indexeur personnalisé (3 pts)
+
+17. Dans le projet Shared, créer une collection spécialisée en classe InventaireOrdinateurs avec des indexeurs de Type 
+`
+
+this[string reference]
+this[int index]
+
+InventaireOrdinateurs[ordinateurId]
+InventaireOrdinateurs[OrinateurNom]
+`
+
+18. Utiliser ceci dans un endpoint de la classe OrdinateurController
+exemple
+`
+[HttpGet("inventaire/{nom}")]
+    public IActionResult Chercher(string nom)
+    {
+        var inventaire = new InventaireOrdinateurs();
+        inventaire.Ordinateurs = _context.Ordinateurs.ToList();
+
+        var ordinateur = inventaire[nom]; // Exemple de recherche par nom
+
+        return Ok(ordinateur);
+    }
+`
+
+## Partie 5 - Gestion des ressources (2 pts)
+
+19. Créer les dossiers pour Logs\Reparations_Logs\Ordinateurs
+
+20. Créer le service JournalService.cs
+`
+public class JournalService
+{
+    public void Ecrire(string message)
+    {
+        using var writer =
+            new StreamWriter(
+                "reparations.log",
+                append: true);
+
+        writer.WriteLine(message);
+    }
+}
+`
+
+21. A chaque réparation écrire dans les logs avec la date du jour(qui changera bien sur chaque jour) 
+`
+15/10/2026 - Dell XPS réparé
+`
+
+22. Ecrire dans les logs aussi pour les actions sur ordinateur (ajout, modification, suppression etc...)
+
+## Partie 7 -Correction et tests unitaires (2 pts)
+
+23. Ajouter un test de création de Reparation
+

@@ -1,0 +1,194 @@
+# Gestion d'une flotte d'ordinateurs
+
+Ce projet est une application ASP.NET Core permettant
+de gérer une flotte d'ordinateurs via une API REST.
+Au travers de ce TP, vous manipulerez les bases de la POO,
+les contrôleurs ASP.NET Core, Swagger et les tests unitaires.
+
+# Contexte
+
+Vous êtes développeur au sein d'une entreprise de services numériques.
+L'équipe informatique souhaite disposer d'une API permettant de gérer le parc d'ordinateurs de l'entreprise.
+Votre mission consiste à développer une API REST en C# / ASP.NET Core permettant :
+
+d'ajouter des ordinateurs ;
+d'afficher les ordinateurs existants ;
+de modifier un ordinateur ;
+de supprimer un ordinateur ;
+de vérifier le bon fonctionnement du code grâce à des tests unitaires.
+
+# Objectifs pédagogiques
+
+À l'issue de ce TP, vous devrez être capable de :
+
+créer une classe métier en C# ;
+manipuler des collections ;
+créer un contrôleur ASP.NET Core ;
+créer des endpoints REST ;
+utiliser Swagger ;
+écrire des tests unitaires simples avec xUnit ;
+comprendre les opérations CRUD.
+
+## Démarrage
+
+Pensez aux commentaires dans vos codes.
+
+### Initialisation (2 pts)
+
+1. Créer un dossier racine
+
+````
+mkdir GestionOrdinateurs
+cd GestionOrdinateurs
+````
+
+2. Créer la solution
+
+````
+dotnet new sln -n GestionOrdinateurs
+````
+
+3. Créer le projet Web API (backend)
+
+````
+dotnet new webapi -n GestionOrdinateurs.API --no-https
+````
+
+4. Créer le projet Shared (modèles partagés)
+
+````
+dotnet new classlib -n GestionOrdinateurs.Shared
+````
+
+5. Ajouter ces deux projets dans la solution
+
+````
+dotnet sln add .\\GestionOrdinateurs.Shared
+dotnet sln add .\\GestionOrdinateurs.API
+````
+
+6a. Ajouter le projet Shared comme référence dans le projet API
+
+````
+dotnet add GestionOrdinateurs.API/GestionOrdinateurs.API.csproj reference GestionOrdinateurs.Shared/GestionOrdinateurs.Shared.csproj
+````
+
+6b. Tester le lancement de l'API
+
+````
+cd GestionOrdinateurs.API
+dotnet build
+dotnet run
+````
+
+### Gestion/Création des modèles (3 pts)
+
+7. Dans le projet GestionOrdinateurs.Shared
+8. Créer une classe Ordinateur avec des propriétés (ID (unique),Nom, Marque, RAM, Processeur, EtatOrdinateur). Etat ordinateur doit être un enum.
+9. Ajouter des classes dérivées : OrdinateurPortable, OrdinateurFixe (→ héritage).
+10. Enrichissez avec des méthodes héritées (au moins 2) et des méthodes spécifiques (au moins 2).
+11. Encapsuler les champs sensibles (→ encapsulation).
+* Empecher la modification directe de certaines propriétés.
+Exemple :
+
+  * Id doit être modifiable uniquement à l'initialisation.
+  * Certaines propriétés peuvent posséder un set privé.
+
+
+
+### Jeu de données initial (2 pts)
+
+12. Créer une classe statique ParcInitializer.cs
+13. Dans cette classe créer une liste statique d'ordinateurs avec au moins 5 ordinateurs.
+
+
+
+### Gestion de l'API REST (8 pts)
+
+14. Créer un controlleur dans le projet API OrdinateursController.cs
+
+````
+Hérite de la classe \*\*ControllerBase\*\*
+Ajouter les attributs : 
+  - \[ApiController]
+  - \[Route("api/\[controller]")]
+
+Exemples : 
+[ApiController]
+[Route("api/[controller]")]
+public class GreetingController : ControllerBase
+{
+  //….
+}
+````
+
+15. Dans le projet API, Créer une classe OrdinateurService permettant les opérations CRUD
+ - Ajouter un ordinateur
+ - supprimer un ordinateur
+ - Mettre à jour un ordinateur
+ - Lister les ordinateurs
+ - Renvoyer un ordinateur par ID
+
+16. Ajouter des endpoints (Méthodes d'API) pour renvoyer la liste des ordinateurs, Ajouter un ordinateur, modifier les informations d'un ordinateur, supprimer un ordinateur
+(Appeler les méthodes de la classe service précédente)
+
+````
+\[HttpGet("{id}")]
+public IActionResult GetComputerById(int id)
+````
+
+````
+GET /ordinateurs
+GET /ordinateurs/{id}
+  => Retourner 404 si non trouvé
+POST /ordinateurs
+  => Retourner 201 si ordinateur créé
+PUT /ordinateurs/{id}
+  => retourner 404 si ordinateur non trouvé et 200 si mise à jour
+DELETE /ordinateurs/{id}
+  => retourner 404 si ordinateur pas trouvé
+  => retourner 204 si operation réussie
+````
+
+17. Configurer swagger
+
+````
+dotnet add package Swashbuckle.AspNetCore
+
+Swagger est activé pour tester l'API :
+- Accès via `http://localhost:PORT/swagger`
+
+Dans Program.cs au lancement de l'API
+
+builder.Services.AddSwaggerGen();
+
+app.UseSwagger();
+app.UseSwaggerUI();
+
+
+````
+
+18. Faire les tests via swagger
+
+
+### Tests unitaires (5 pts)
+
+18. Créer le projet tests
+
+````
+dotnet new xunit -n GestionOrdinateurs.Tests
+````
+
+20. Créer la classe OrdinateurServiceTest
+21. Créer un test pour vérifier l'ajout d'un ordinateur
+22. Créer un test pour vérifier la suppression d'un ordinateur (existant ou non)
+23. Exécuter les tests unitaires (dotnet test)
+
+
+
+### Bonus (Facultatif) (2 points)
+
+
+24. Créer un endpoint permettant de rechercher les ordinateurs par marque.
+GET /ordinateurs/marque/{marque}
+

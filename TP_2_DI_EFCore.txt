@@ -1,0 +1,107 @@
+# Gestion d'une flotte d'ordinateurs
+
+Suite de la gestion de Flottes. Modification l'API de gestion des ordinateurs.
+
+# Objectifs pédagogiques
+
+À l'issue de ce TP, vous devrez être capable de :
+
+gérer l'injection de dépendance en C# ;
+Ajouter des configuration et écrire des logs.
+Utiliser EF Core et les évènements en C#.
+comprendre les opérations CRUD avec EF Core.
+
+## Démarrage
+Pensez aux commentaires dans vos codes.
+
+### Tout le travail s'effectuera dans la solution GestionOrinateurs du premier TP.
+
+
+### Injection des dépendances (2 pts)
+
+1. Dans le projet GestionOrdinateurs.API, Créer l'interface IOrdinateurService (y mettre la signature des méthodes qui sont dans OrdinateurService)
+
+2. Modifier la classe OrdinateurService pour qu'elle hérite de IOrdinateurService et implémente toutes les méthodes qui existaient(existe) déjà dans OrdinateurService.
+
+3. Enregistrer le service dans le Program.cs (comme vue en cours) (builder.services.AddSingleton...)
+
+4. Injecter le service dans OrdinateursController
+
+5. Exécuter le projet API et Vérifier que GET /api/ordinateurs fonctionne toujours.
+
+
+### Ajout des logs (2 pts)
+
+6. Injecter ILogger dans le controller OrdinateursController
+
+7. Mettre une log dans chaque endpoints de votre controller.
+
+
+### Ajouter la configuration (2 pts)
+
+8. Dans le projet GestionOrdinateurs.API, Créer le fichier appsettings.json (s'il n'existe pas).
+
+9. Ajouter dans ce fichier le nom de l'application et la version.
+````
+"Application": {
+    "Name": "GestionOrdinateurs",
+    "Version": "2.0"
+  }
+````
+
+10. Injecter IConfiguration dans le contrôleur.
+
+11. Ajouter un endpoint dans OrdinateursController, (GET /api/ordinateurs/info) qui affichera les information sur l'application prises dans le fichier appsettings.json et tester via swagger. 
+
+
+### Entity Framework Core (8 pts)
+
+12. Dans le projet GestionOrdinateurs.API, Installer les packages suivants : 
+````
+dotnet add package Microsoft.EntityFrameworkCore
+dotnet add package Microsoft.EntityFrameworkCore.Sqlite
+dotnet add package Microsoft.EntityFrameworkCore.Design
+````
+
+Installer également l'outil : 
+````
+dotnet tool install --global dotnet-ef
+````
+
+13. Créer la classe `ParcInformatiqueContext` héritant de DbContext
+
+14. Ajouter la propriété `DbSet<Ordinateur> Ordinateurs`
+
+15. Configurer SQLite
+````
+protected override void OnConfiguring(
+    DbContextOptionsBuilder optionsBuilder)
+{
+    optionsBuilder.UseSqlite("Data Source=parcinfo.db");
+}
+````
+
+16. Enregistrer votre contexte au niveau de Program.cs
+
+17. Créer la migration, Créer la base et vérifier que le fichier parcinfo.db existe bien dans le projet.
+
+18. Adapter les endpoints pour utiliser maintenant le contexte de la base données. (remplacer completement le ParcInitialiser par la base de données).
+
+19. Supprimer le fichier "parcInitialiser.cs" et tester vos APIs via swagger
+
+### Evènements (6 pts)
+
+19. Créer les classes `OrdinateurAjouteEventArgs`, `OrdinateurSupprimeEventArgs` et `OrdinateurMisAJourEventArgs` (1,5 pt)
+
+20. Dans `OrdinateurService` ajouter la définition de chaque évènement. (0,5 pt)
+````
+public event EventHandler<OrdinateurAjouteEventArgs> OrdinateurAjoute;
+````
+
+21. Déclencher l'évènement lorsque qu'on crée/ajoute un ordinateur, supprime un ordinateur et met à jour un ordinateur. (1,5pt)
+
+22. Créer les abonnés correspondants  (AfficherMessage...()) (1,5 pt)
+
+23. Vérifier l'affichage en testant via swagger les opérations d'ajout, mise à jour et suppression d'un ordinateur de votre base de données. (1 pt)
+
+

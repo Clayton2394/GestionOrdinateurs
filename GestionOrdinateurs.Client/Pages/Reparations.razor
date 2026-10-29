@@ -1,0 +1,81 @@
+@page "/reparations"
+@using System.Net.Http.Headers
+@using System.Net.Http.Json
+@inject IHttpClientFactory HttpClientFactory
+@inject Blazored.SessionStorage.ISessionStorageService SessionStorage
+
+<PageTitle>Historique des réparations</PageTitle>
+
+<h1>Historique des réparations</h1>
+
+@if (loading)
+{
+    <p>Chargement...</p>
+}
+else if (errorMessage is not null)
+{
+    <p class="text-danger">@errorMessage</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Ordinateur</th>
+                <th>Technicien</th>
+                <th>Type de réparation</th>
+                <th>Date d’intervention</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var reparation in reparations)
+            {
+                <tr>
+                    <td>@reparation.NomOrdinateur</td>
+                    <td>@reparation.Technicien</td>
+                    <td>@reparation.TypeReparation</td>
+                    <td>@reparation.DateIntervention.ToLocalTime().ToString("g")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<HistoriqueReparation> reparations = new();
+    private string? errorMessage;
+    private bool loading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var client = HttpClientFactory.CreateClient("GestionOrdinateursApi");
+            var token = await SessionStorage.GetItemAsync<string>("authToken");
+            if (!string.IsNullOrWhiteSpace(token))
+            {
+                client.DefaultRequestHeaders.Authorization =
+                    new AuthenticationHeaderValue("Bearer", token);
+            }
+
+            var result = await client.GetFromJsonAsync<List<HistoriqueReparation>>(
+                "api/Reparation/historique");
+            reparations = result ?? new List<HistoriqueReparation>();
+        }
+        catch (HttpRequestException)
+        {
+            errorMessage = "Impossible de charger l’historique des réparations.";
+        }
+        finally
+        {
+            loading = false;
+        }
+    }
+
+    private sealed record HistoriqueReparation(
+        int OrdinateurId,
+        string NomOrdinateur,
+        string Technicien,
+        string TypeReparation,
+        DateTimeOffset DateIntervention);
+}
