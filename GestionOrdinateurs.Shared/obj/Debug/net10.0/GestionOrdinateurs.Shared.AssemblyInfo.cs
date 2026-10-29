@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("GestionOrdinateurs.Shared")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7127fbf2045ee000b4376871a6d5df60af37c597")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c8f5415f692d2ade58fd86b8b293edf62ecd2e14")]
 [assembly: System.Reflection.AssemblyProductAttribute("GestionOrdinateurs.Shared")]
 [assembly: System.Reflection.AssemblyTitleAttribute("GestionOrdinateurs.Shared")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
